@@ -1,0 +1,6 @@
+django~=4.0
+django-heroku
+django-cors-headers
+djangorestframework~=3.13.0
+gunicorn
+PyPDF2~=1.26.0

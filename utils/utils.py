@@ -8,7 +8,7 @@ TEXT_MARKINGS_KEY = 'textMarkings'
 FROM_KEY = 'from'
 TO_KEY = 'to'
 TYPE_KEY = 'type'
-CORRECTIONS_KEY = 'corrections'
+SUGGESTIONS_KEY = 'suggestions'
 
 TYPO_KEY = 'typo'
 LOANWORD_KEY = 'loanword'

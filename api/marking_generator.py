@@ -3,8 +3,8 @@ import pickle
 from random import shuffle
 
 from utils.utils import fetch_all_words, TEXT_KEY, TEXT_MARKINGS_KEY, FROM_KEY, TYPE_KEY, \
-    DESCRIPTION_KEY, CORRECTIONS_KEY, TO_KEY, TYPO_KEY, ALTERNATIVES_KEY, ORIGIN_KEY, LOANWORD_KEY, ADAPTATIONS_KEY, \
-    flatten_list
+    DESCRIPTION_KEY, TO_KEY, TYPO_KEY, ALTERNATIVES_KEY, ORIGIN_KEY, LOANWORD_KEY, ADAPTATIONS_KEY, \
+    flatten_list, SUGGESTIONS_KEY
 
 # the following initialization code will be polished when a proper deployment machine is available
 
@@ -31,7 +31,7 @@ else:
     print('the pickles are already loaded')
 
 
-def generate_markings(text, max_corrs=5):
+def generate_markings(text, max_suggs=5):
     # There's currently an ongoing implicit gentleman's agreement to not deliberately spam the server. If broken, this
     # (and additional measures in this vein) will be enabled.
     # if len(text) > 5000:
@@ -91,14 +91,14 @@ def generate_markings(text, max_corrs=5):
                         {FROM_KEY: from_index, TO_KEY: to_index,
                          TYPE_KEY: LOANWORD_KEY,
                          DESCRIPTION_KEY: 'huazim jo i standardizuar, ' + loanword_details[ORIGIN_KEY],
-                         CORRECTIONS_KEY: loanword_details[ALTERNATIVES_KEY]}])
+                         SUGGESTIONS_KEY: loanword_details[ALTERNATIVES_KEY]}])
                 else:
-                    corrections = top_n_corrections(incoming_word, max_corrs)
-                    if corrections:
+                    suggestions = top_n_suggestions(incoming_word, max_suggs)
+                    if suggestions:
                         content[TEXT_MARKINGS_KEY].extend([
                             {FROM_KEY: from_index, TO_KEY: to_index, TYPE_KEY: TYPO_KEY,
                              DESCRIPTION_KEY: 'gabim gramatikor, drejtshkrim',
-                             CORRECTIONS_KEY: corrections}])
+                             SUGGESTIONS_KEY: suggestions}])
 
         if word_index == len(all_written_words):
             break
@@ -120,35 +120,35 @@ def get_loanword_details(word):
     return loanword_details[0]
 
 
-def top_n_corrections(word, n=-1):
-    corrections = []
+def top_n_suggestions(word, n=-1):
+    suggestions = []
     if word in DICTIONARY:  # correct word, besa -> besa
-        return corrections
+        return suggestions
     else:
         word_deletes = generate_deletes_of_word(word)
 
         word_deletes_keys = list(word_deletes.keys())
 
         if word in DELETES_DICTIONARY:  # missing character, bea -> besa
-            corrections.extend(DELETES_DICTIONARY[word])
+            suggestions.extend(DELETES_DICTIONARY[word])
 
         some_suggs = []  # redundant characters, bbesa -> besa
         for w in word_deletes_keys:
             if w in DICTIONARY:
                 some_suggs.append(w)
-        corrections.extend(flatten_list(some_suggs))
+        suggestions.extend(flatten_list(some_suggs))
 
         other_suggs = []  # incorrect characters, gesa -> besa
         for w in word_deletes_keys:
             if w in DELETES_DICTIONARY:
                 other_suggs.append(DELETES_DICTIONARY[w])
-        corrections.extend(flatten_list(other_suggs))
+        suggestions.extend(flatten_list(other_suggs))
 
-        if not corrections:
+        if not suggestions:
             pass  # hmm, probably doesn't exist
 
-    shuffle(corrections)  # as context is not relevant to the current algorithm
-    return corrections if n == -1 else corrections[:n]
+    shuffle(suggestions)  # as context is not relevant to the current algorithm
+    return suggestions if n == -1 else suggestions[:n]
 
 
 def generate_deletes_of_word(word):

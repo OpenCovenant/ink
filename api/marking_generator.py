@@ -31,7 +31,7 @@ else:
     print('the pickles are already loaded')
 
 
-def generate_markings(text, max_suggs=5):
+def generate_markings(text, max_suggestions=5):
     # There's currently an ongoing implicit gentleman's agreement to not deliberately spam the server. If broken, this
     # (and additional measures in this vein) will be enabled.
     # if len(text) > 5000:
@@ -93,7 +93,7 @@ def generate_markings(text, max_suggs=5):
                          DESCRIPTION_KEY: 'huazim jo i standardizuar, ' + loanword_details[ORIGIN_KEY],
                          SUGGESTIONS_KEY: loanword_details[ALTERNATIVES_KEY]}])
                 else:
-                    suggestions = top_n_suggestions(incoming_word, max_suggs)
+                    suggestions = top_n_suggestions(incoming_word, max_suggestions)
                     if suggestions:
                         content[TEXT_MARKINGS_KEY].extend([
                             {FROM_KEY: from_index, TO_KEY: to_index, TYPE_KEY: TYPO_KEY,
@@ -132,17 +132,17 @@ def top_n_suggestions(word, n=-1):
         if word in DELETES_DICTIONARY:  # missing character, bea -> besa
             suggestions.extend(DELETES_DICTIONARY[word])
 
-        some_suggs = []  # redundant characters, bbesa -> besa
+        some_suggestions = []  # redundant characters, bbesa -> besa
         for w in word_deletes_keys:
             if w in DICTIONARY:
-                some_suggs.append(w)
-        suggestions.extend(flatten_list(some_suggs))
+                some_suggestions.append(w)
+        suggestions.extend(flatten_list(some_suggestions))
 
-        other_suggs = []  # incorrect characters, gesa -> besa
+        other_suggestions = []  # incorrect characters, gesa -> besa
         for w in word_deletes_keys:
             if w in DELETES_DICTIONARY:
-                other_suggs.append(DELETES_DICTIONARY[w])
-        suggestions.extend(flatten_list(other_suggs))
+                other_suggestions.append(DELETES_DICTIONARY[w])
+        suggestions.extend(flatten_list(other_suggestions))
 
         if not suggestions:
             pass  # hmm, probably doesn't exist

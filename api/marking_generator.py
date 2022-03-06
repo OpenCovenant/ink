@@ -4,7 +4,7 @@ from random import shuffle
 
 from utils.utils import fetch_all_words, TEXT_KEY, TEXT_MARKINGS_KEY, FROM_KEY, TYPE_KEY, \
     DESCRIPTION_KEY, CORRECTIONS_KEY, TO_KEY, TYPO_KEY, ALTERNATIVES_KEY, ORIGIN_KEY, LOANWORD_KEY, ADAPTATIONS_KEY, \
-    flatten_list
+    flatten_list, SUBTYPE_KEY
 
 # the following initialization code will be polished when a proper deployment machine is available
 
@@ -88,16 +88,17 @@ def generate_markings(text, max_corrs=5):
                 if is_loanword(incoming_word):
                     loanword_details = get_loanword_details(incoming_word)
                     content[TEXT_MARKINGS_KEY].extend([
-                        {FROM_KEY: from_index, TO_KEY: to_index,
-                         TYPE_KEY: LOANWORD_KEY,
-                         DESCRIPTION_KEY: 'huazim jo i standardizuar, ' + loanword_details[ORIGIN_KEY],
+                        {FROM_KEY: from_index, TO_KEY: to_index, TYPE_KEY: LOANWORD_KEY,
+                         SUBTYPE_KEY: 'huazim ' + map_to_Albanian(loanword_details[ORIGIN_KEY]),
+                         DESCRIPTION_KEY: 'zëvendësime në shqip për ' + incoming_word + ' janë',
                          CORRECTIONS_KEY: loanword_details[ALTERNATIVES_KEY]}])
                 else:
                     corrections = top_n_corrections(incoming_word, max_corrs)
                     if corrections:
                         content[TEXT_MARKINGS_KEY].extend([
                             {FROM_KEY: from_index, TO_KEY: to_index, TYPE_KEY: TYPO_KEY,
-                             DESCRIPTION_KEY: 'gabim gramatikor, drejtshkrim',
+                             SUBTYPE_KEY: 'gabim gramatikor, drejtshkrim',
+                             DESCRIPTION_KEY: 'fjala ' + incoming_word + ' nuk ekziston, a doje të shkruaje',
                              CORRECTIONS_KEY: corrections}])
 
         if word_index == len(all_written_words):
@@ -105,6 +106,12 @@ def generate_markings(text, max_corrs=5):
 
         char_index += 1
     return content
+
+
+def map_to_Albanian(loanword_type):
+    loanword_types_map = {'ottoman': 'otoman', 'greek': 'grek', 'slavic': 'sllav', 'english': 'anglisht'}
+
+    return loanword_types_map[loanword_type] if loanword_type in loanword_types_map else loanword_type
 
 
 def is_loanword(word):

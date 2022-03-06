@@ -8,6 +8,7 @@ TEXT_MARKINGS_KEY = 'textMarkings'
 FROM_KEY = 'from'
 TO_KEY = 'to'
 TYPE_KEY = 'type'
+SUBTYPE_KEY = 'subtype'
 CORRECTIONS_KEY = 'corrections'
 
 TYPO_KEY = 'typo'

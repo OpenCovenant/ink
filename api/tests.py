@@ -1,11 +1,86 @@
 from django.test import TestCase
 
 from api.marking_generator import generate_markings
-from utils.utils import TEXT_KEY, TEXT_MARKINGS_KEY, ALPHABET, fetch_all_words
+from utils.utils import TEXT_KEY, TEXT_MARKINGS_KEY, ALPHABET, fetch_all_words, fetch_all_sentences
 
 
 def _generate_empty_marking_with_text(text):
     return {TEXT_KEY: text, TEXT_MARKINGS_KEY: []}
+
+
+class SentenceParsingTestCase(TestCase):
+    def test_a_declarative_sentence(self):
+        sentence = "Veç disa yje dallohen, ndoshta Venusi, ndonjë bisht arushe, e ndonjë gjurmë aeroplani."
+        self.assertEqual(fetch_all_sentences(sentence), [sentence])
+
+    def test_an_interrogative_sentence(self):
+        sentence = "A e zuri gjumi?"
+        self.assertEqual(fetch_all_sentences(sentence), [sentence])
+
+    def test_an_exclamatory_sentence(self):
+        sentence = "Sikur të ishte ushtruar më shumë."
+        self.assertEqual(fetch_all_sentences(sentence), [sentence])
+
+    def test_a_sentence_with_a_question_mark_and_an_exclamation_mark(self):
+        sentence = "Pra ende nuk kemi makina fluturuese?!"
+        self.assertEqual(fetch_all_sentences(sentence), [sentence])
+
+    def test_a_sentence_with_an_exclamation_mark_and_a_question_mark(self):
+        sentence = "Pse me detyrim është blerja e revistës!?"
+        self.assertEqual(fetch_all_sentences(sentence), [sentence])
+
+    def test_a_sentence_with_many_question_marks(self):
+        sentence = "Mos na kaloi para syve???"
+        self.assertEqual(fetch_all_sentences(sentence), [sentence])
+
+    def test_a_declarative_sentence_and_a_half(self):
+        sentences = "Veç disa yje dallohen, ndoshta Venusi, ndonjë bisht arushe, e ndonjë gjurmë aeroplani. Djali del"
+        sentences_list = ["Veç disa yje dallohen, ndoshta Venusi, ndonjë bisht arushe, e ndonjë gjurmë aeroplani."]
+        self.assertEqual(fetch_all_sentences(sentences), sentences_list)
+
+    def test_two_sentences(self):
+        sentences = "Ndez cigaren e nxjerr tymin e parë. Dikush që do ta shihte nga larg, nuk do ta kuptonte n.q.s." \
+                    " ishte tym apo avull."
+        sentences_list = ["Ndez cigaren e nxjerr tymin e parë.",
+                          "Dikush që do ta shihte nga larg, nuk do ta kuptonte n.q.s. ishte tym apo avull."]
+        self.assertEqual(fetch_all_sentences(sentences), sentences_list)
+
+    def test_two_sentences_with_appended_space(self):
+        sentences = "Ndez cigaren e nxjerr tymin e parë. Dikush që do ta shihte nga larg, nuk do ta kuptonte n.q.s." \
+                    " ishte tym apo avull. "
+        sentences_list = ["Ndez cigaren e nxjerr tymin e parë.",
+                          "Dikush që do ta shihte nga larg, nuk do ta kuptonte n.q.s. ishte tym apo avull."]
+        self.assertEqual(fetch_all_sentences(sentences), sentences_list)
+
+    def test_a_sentence_with_a_date(self):
+        sentence = "Manastir, më 14.11.1908."
+        self.assertEqual(fetch_all_sentences(sentence), [sentence])
+
+    def test_a_sentence_with_an_ellipsis(self):
+        sentence = "Njerëzit po fillojnë të shtohen tek bari, ndoshta është momenti që të lëvizë…"
+        self.assertEqual(fetch_all_sentences(sentence), [sentence])
+
+    def test_sentence_with_quotes(self):
+        sentence = '"Le të punojmë më fort, - kishte thënë Genti, - sa më shpejt të jetë e mundur!"'
+        self.assertEqual(fetch_all_sentences(sentence), [sentence])
+
+    def test_many_sentences(self):
+        sentences = '"Le të punojmë më fort, - kishte thënë Artani, - sa më shpejt të jetë e mundur!" Mëngjesi erdhi.'
+        sentences_list = ['"Le të punojmë më fort, - kishte thënë Artani, - sa më shpejt të jetë e mundur!"',
+                          'Mëngjesi erdhi.']
+        self.assertEqual(fetch_all_sentences(sentences), sentences_list)
+
+    def test_more_sentences(self):
+        sentences = "Vazhdon ecën duke mos menduar shumë, me kokën poshtë. Shihte hijen e tij, të krijuar nga mijëra" \
+                    " dritat sipër kokës, të vendosura nga bashkia për sa më shumë foto nga ata që vijnë në qytet apo" \
+                    " dhe nga banorët e saj. Lokali i tij i preferuar qenka hapur, qenka dhe kamerieri i tij i" \
+                    " preferuar, ai që të lodh me muhabet… Kafen me qumësht anash?"
+        sentences_list = ["Vazhdon ecën duke mos menduar shumë, me kokën poshtë.",
+                          "Shihte hijen e tij, të krijuar nga mijëra dritat sipër kokës, të vendosura nga bashkia për"
+                          " sa më shumë foto nga ata që vijnë në qytet apo dhe nga banorët e saj.",
+                          "Lokali i tij i preferuar qenka hapur, qenka dhe kamerieri i tij i preferuar, ai që të lodh"
+                          " me muhabet…", "Kafen me qumësht anash?"]
+        self.assertEqual(fetch_all_sentences(sentences), sentences_list)
 
 
 class TextParsingTestCase(TestCase):

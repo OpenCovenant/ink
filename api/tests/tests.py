@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from api.marking_generator import generate_markings
+from api.marking_generator import generate_markings, filter_corrections
 from utils.utils import TEXT_KEY, TEXT_MARKINGS_KEY, ALPHABET, fetch_all_words, fetch_all_sentences
 
 
@@ -82,6 +82,31 @@ class SentenceParsingTestCase(TestCase):
                           " me muhabet…", "Kafen me qumësht anash?"]
         self.assertEqual(fetch_all_sentences(sentences), sentences_list)
 
+
+class FilteringCorrectionsTestCase(TestCase):
+    def test_empty_corrections(self):
+        self.assertEqual(filter_corrections([]), [])
+
+    def test_a_lowercase_correction(self):
+        corrections = ['kontinent']
+        self.assertEqual(filter_corrections(corrections), corrections)
+
+    def test_an_uppercase_correction(self):
+        corrections = ['Poemë']
+        self.assertEqual(filter_corrections(corrections), [])
+
+    def test_another_uppercase_correction(self):
+        corrections = ['matesH']
+        self.assertEqual(filter_corrections(corrections), [])
+
+    def test_uppercase_and_lowercase_corrections(self):
+        corrections = ['lehtësoj', 'Mikpritjen', 'ogurzi']
+        expected_corrections = ['lehtësoj', 'ogurzi']
+        self.assertEqual(filter_corrections(corrections), expected_corrections)
+
+    def test_uppercase_corrections(self):
+        corrections = ['Lopa', 'lOpa', 'loPa', 'lopA']
+        self.assertEqual(filter_corrections(corrections), [])
 
 class TextParsingTestCase(TestCase):
     def test_a_character(self):

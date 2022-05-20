@@ -128,6 +128,10 @@ def get_loanword_details(word):
     return loanword_details[0]
 
 
+def filter_corrections(corrections):
+    return list(filter(lambda correction: not any(map(str.isupper, correction)), corrections))
+
+
 def top_n_suggestions(word, n=-1):
     suggestions = []
     if word in DICTIONARY:  # correct word, besa -> besa
@@ -159,6 +163,8 @@ def top_n_suggestions(word, n=-1):
 
         if not suggestions:
             pass  # hmm, probably doesn't exist
+
+    suggestions = filter_corrections(suggestions)
 
     shuffle(suggestions)  # as context is not relevant to the current algorithm
     return suggestions if n == -1 else suggestions[:n]

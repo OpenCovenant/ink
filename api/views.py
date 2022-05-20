@@ -17,7 +17,8 @@ def ping(request):
 def marking(request):
     text = request.body.decode('utf-8')
 
-    content = generate_markings(text)
+    max_suggestions = int(request.GET.get('limit', '-1'))
+    content = generate_markings(text, max_suggestions)
 
     return JsonResponse(content)
 

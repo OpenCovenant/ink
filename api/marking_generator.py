@@ -2,9 +2,10 @@ import json
 import pickle
 from random import shuffle
 
+from api.ec_specials import generate_ec_permutations
 from utils.utils import fetch_all_words, TEXT_KEY, TEXT_MARKINGS_KEY, FROM_KEY, TYPE_KEY, \
     DESCRIPTION_KEY, TO_KEY, TYPO_KEY, ALTERNATIVES_KEY, ORIGIN_KEY, LOANWORD_KEY, ADAPTATIONS_KEY, \
-    flatten_list, SUGGESTIONS_KEY
+    flatten_list, SUGGESTIONS_KEY, SUBTYPE_KEY
 
 # the following initialization code will be polished when a proper deployment machine is available
 
@@ -88,16 +89,17 @@ def generate_markings(text, max_suggestions=5):
                 if is_loanword(incoming_word):
                     loanword_details = get_loanword_details(incoming_word)
                     content[TEXT_MARKINGS_KEY].extend([
-                        {FROM_KEY: from_index, TO_KEY: to_index,
-                         TYPE_KEY: LOANWORD_KEY,
-                         DESCRIPTION_KEY: 'huazim jo i standardizuar, ' + loanword_details[ORIGIN_KEY],
+                        {FROM_KEY: from_index, TO_KEY: to_index, TYPE_KEY: LOANWORD_KEY,
+                         SUBTYPE_KEY: 'huazim ' + map_to_Albanian(loanword_details[ORIGIN_KEY]),
+                         DESCRIPTION_KEY: 'zëvendësime në shqip për ' + incoming_word + ' janë',
                          SUGGESTIONS_KEY: loanword_details[ALTERNATIVES_KEY]}])
                 else:
                     suggestions = top_n_suggestions(incoming_word, max_suggestions)
                     if suggestions:
                         content[TEXT_MARKINGS_KEY].extend([
                             {FROM_KEY: from_index, TO_KEY: to_index, TYPE_KEY: TYPO_KEY,
-                             DESCRIPTION_KEY: 'gabim gramatikor, drejtshkrim',
+                             SUBTYPE_KEY: 'gabim gramatikor, drejtshkrim',
+                             DESCRIPTION_KEY: 'fjala ' + incoming_word + ' nuk ekziston, a doje të shkruaje',
                              SUGGESTIONS_KEY: suggestions}])
 
         if word_index == len(all_written_words):
@@ -105,6 +107,12 @@ def generate_markings(text, max_suggestions=5):
 
         char_index += 1
     return content
+
+
+def map_to_Albanian(loanword_type):
+    loanword_types_map = {'ottoman': 'otoman', 'greek': 'grek', 'slavic': 'sllav', 'english': 'anglisht'}
+
+    return loanword_types_map[loanword_type] if loanword_type in loanword_types_map else loanword_type
 
 
 def is_loanword(word):
@@ -143,6 +151,11 @@ def top_n_suggestions(word, n=-1):
             if w in DELETES_DICTIONARY:
                 other_suggestions.append(DELETES_DICTIONARY[w])
         suggestions.extend(flatten_list(other_suggestions))
+
+        if 'e' in word or 'c' in word:  # missing ë or ç, qenesishem -> qenësishëm
+            ec_suggestions = generate_ec_permutations(word)
+            ec_suggestions = list(filter(lambda ecs: ecs not in suggestions and ecs in DICTIONARY, ec_suggestions))
+            suggestions.extend(ec_suggestions)
 
         if not suggestions:
             pass  # hmm, probably doesn't exist

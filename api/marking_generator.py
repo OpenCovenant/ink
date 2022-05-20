@@ -2,9 +2,10 @@ import json
 import pickle
 from random import shuffle
 
+from api.ec_specials import generate_ec_permutations
 from utils.utils import fetch_all_words, TEXT_KEY, TEXT_MARKINGS_KEY, FROM_KEY, TYPE_KEY, \
-    DESCRIPTION_KEY, CORRECTIONS_KEY, TO_KEY, TYPO_KEY, ALTERNATIVES_KEY, ORIGIN_KEY, LOANWORD_KEY, ADAPTATIONS_KEY, \
-    flatten_list
+    DESCRIPTION_KEY, TO_KEY, TYPO_KEY, ALTERNATIVES_KEY, ORIGIN_KEY, LOANWORD_KEY, ADAPTATIONS_KEY, \
+    flatten_list, SUGGESTIONS_KEY, SUBTYPE_KEY
 
 # the following initialization code will be polished when a proper deployment machine is available
 
@@ -31,7 +32,7 @@ else:
     print('the pickles are already loaded')
 
 
-def generate_markings(text, max_corrs=5):
+def generate_markings(text, max_suggestions=5):
     # There's currently an ongoing implicit gentleman's agreement to not deliberately spam the server. If broken, this
     # (and additional measures in this vein) will be enabled.
     # if len(text) > 5000:
@@ -88,23 +89,30 @@ def generate_markings(text, max_corrs=5):
                 if is_loanword(incoming_word):
                     loanword_details = get_loanword_details(incoming_word)
                     content[TEXT_MARKINGS_KEY].extend([
-                        {FROM_KEY: from_index, TO_KEY: to_index,
-                         TYPE_KEY: LOANWORD_KEY,
-                         DESCRIPTION_KEY: 'huazim jo i standardizuar, ' + loanword_details[ORIGIN_KEY],
-                         CORRECTIONS_KEY: loanword_details[ALTERNATIVES_KEY]}])
+                        {FROM_KEY: from_index, TO_KEY: to_index, TYPE_KEY: LOANWORD_KEY,
+                         SUBTYPE_KEY: 'huazim ' + map_to_Albanian(loanword_details[ORIGIN_KEY]),
+                         DESCRIPTION_KEY: 'zëvendësime në shqip për ' + incoming_word + ' janë',
+                         SUGGESTIONS_KEY: loanword_details[ALTERNATIVES_KEY]}])
                 else:
-                    corrections = top_n_corrections(incoming_word, max_corrs)
-                    if corrections:
+                    suggestions = top_n_suggestions(incoming_word, max_suggestions)
+                    if suggestions:
                         content[TEXT_MARKINGS_KEY].extend([
                             {FROM_KEY: from_index, TO_KEY: to_index, TYPE_KEY: TYPO_KEY,
-                             DESCRIPTION_KEY: 'gabim gramatikor, drejtshkrim',
-                             CORRECTIONS_KEY: corrections}])
+                             SUBTYPE_KEY: 'gabim gramatikor, drejtshkrim',
+                             DESCRIPTION_KEY: 'fjala ' + incoming_word + ' nuk ekziston, a doje të shkruaje',
+                             SUGGESTIONS_KEY: suggestions}])
 
         if word_index == len(all_written_words):
             break
 
         char_index += 1
     return content
+
+
+def map_to_Albanian(loanword_type):
+    loanword_types_map = {'ottoman': 'otoman', 'greek': 'grek', 'slavic': 'sllav', 'english': 'anglisht'}
+
+    return loanword_types_map[loanword_type] if loanword_type in loanword_types_map else loanword_type
 
 
 def is_loanword(word):
@@ -124,37 +132,42 @@ def filter_corrections(corrections):
     return list(filter(lambda correction: not any(map(str.isupper, correction)), corrections))
 
 
-def top_n_corrections(word, n=-1):
-    corrections = []
+def top_n_suggestions(word, n=-1):
+    suggestions = []
     if word in DICTIONARY:  # correct word, besa -> besa
-        return corrections
+        return suggestions
     else:
         word_deletes = generate_deletes_of_word(word)
 
         word_deletes_keys = list(word_deletes.keys())
 
         if word in DELETES_DICTIONARY:  # missing character, bea -> besa
-            corrections.extend(DELETES_DICTIONARY[word])
+            suggestions.extend(DELETES_DICTIONARY[word])
 
-        some_suggs = []  # redundant characters, bbesa -> besa
+        some_suggestions = []  # redundant characters, bbesa -> besa
         for w in word_deletes_keys:
             if w in DICTIONARY:
-                some_suggs.append(w)
-        corrections.extend(flatten_list(some_suggs))
+                some_suggestions.append(w)
+        suggestions.extend(flatten_list(some_suggestions))
 
-        other_suggs = []  # incorrect characters, gesa -> besa
+        other_suggestions = []  # incorrect characters, gesa -> besa
         for w in word_deletes_keys:
             if w in DELETES_DICTIONARY:
-                other_suggs.append(DELETES_DICTIONARY[w])
-        corrections.extend(flatten_list(other_suggs))
+                other_suggestions.append(DELETES_DICTIONARY[w])
+        suggestions.extend(flatten_list(other_suggestions))
 
-        if not corrections:
+        if 'e' in word or 'c' in word:  # missing ë or ç, qenesishem -> qenësishëm
+            ec_suggestions = generate_ec_permutations(word)
+            ec_suggestions = list(filter(lambda ecs: ecs not in suggestions and ecs in DICTIONARY, ec_suggestions))
+            suggestions.extend(ec_suggestions)
+
+        if not suggestions:
             pass  # hmm, probably doesn't exist
 
-    corrections = filter_corrections(corrections)
+    suggestions = filter_corrections(suggestions)
 
-    shuffle(corrections)  # as context is not relevant to the current algorithm
-    return corrections if n == -1 else corrections[:n]
+    shuffle(suggestions)  # as context is not relevant to the current algorithm
+    return suggestions if n == -1 else suggestions[:n]
 
 
 def generate_deletes_of_word(word):

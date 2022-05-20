@@ -59,7 +59,7 @@ class MarkingsTestCase(TestCase):
         self.assertEqual(type(empty_marking[TEXT_MARKINGS_KEY]), list)
         self.assertEqual(len(empty_marking[TEXT_MARKINGS_KEY]), 0)
 
-    def test_number_of_corrs_in_a_marking(self):
+    def test_number_of_suggestions_in_a_marking(self):
         import secrets
         len_of_word = secrets.randbelow(10)
 
@@ -67,9 +67,9 @@ class MarkingsTestCase(TestCase):
         for _ in range(len_of_word):
             text += ALPHABET[secrets.randbelow(len(ALPHABET))]
 
-        max_corrs = 5
-        markings = generate_markings(text, max_corrs)
-        self.assertLessEqual(len(markings[TEXT_MARKINGS_KEY]), max_corrs)
+        max_suggestions = 5
+        markings = generate_markings(text, max_suggestions)
+        self.assertLessEqual(len(markings[TEXT_MARKINGS_KEY]), max_suggestions)
 
     def test_markings_on_empty_text(self):
         empty_text = ""

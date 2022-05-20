@@ -27,6 +27,10 @@ def fetch_all_words(text):
     return re.findall(r"[\w'-]+", text)
 
 
+def fetch_all_sentences(text):
+    return re.findall(r'["A-Z].*?[.?!…"](?= [A-Z]| $|$)', text)
+
+
 def flatten_list(lists):
     flattened_list = []
     for element in lists:

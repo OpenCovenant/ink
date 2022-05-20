@@ -2,6 +2,7 @@ import json
 import pickle
 from random import shuffle
 
+from api.ec_specials import generate_ec_permutations
 from utils.utils import fetch_all_words, TEXT_KEY, TEXT_MARKINGS_KEY, FROM_KEY, TYPE_KEY, \
     DESCRIPTION_KEY, CORRECTIONS_KEY, TO_KEY, TYPO_KEY, ALTERNATIVES_KEY, ORIGIN_KEY, LOANWORD_KEY, ADAPTATIONS_KEY, \
     flatten_list
@@ -143,6 +144,11 @@ def top_n_corrections(word, n=-1):
             if w in DELETES_DICTIONARY:
                 other_suggs.append(DELETES_DICTIONARY[w])
         corrections.extend(flatten_list(other_suggs))
+
+        if 'e' in word or 'c' in word:  # missing ë or ç, qenesishem -> qenësishëm
+            ec_corrections = generate_ec_permutations(word)
+            ec_corrections = list(filter(lambda ecs: ecs not in corrections and ecs in DICTIONARY, ec_corrections))
+            corrections.extend(ec_corrections)
 
         if not corrections:
             pass  # hmm, probably doesn't exist

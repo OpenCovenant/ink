@@ -9,7 +9,7 @@ FROM_KEY = 'from'
 TO_KEY = 'to'
 TYPE_KEY = 'type'
 SUBTYPE_KEY = 'subtype'
-CORRECTIONS_KEY = 'corrections'
+SUGGESTIONS_KEY = 'suggestions'
 
 TYPO_KEY = 'typo'
 LOANWORD_KEY = 'loanword'

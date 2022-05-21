@@ -121,11 +121,8 @@ def skim_text(text):
     for match in skimming_iterator:
         skippable_intervals.append([match.start(), match.end()])
 
-    print(skippable_intervals)
-
     skippable_intervals = merge(skippable_intervals)
 
-    print(skippable_intervals)
     # skippable_intervals = merge_overlapping_intervals(skippable_intervals)
 
     return skippable_intervals

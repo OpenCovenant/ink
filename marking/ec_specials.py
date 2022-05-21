@@ -7,7 +7,7 @@ def generate_ec_permutations(word):
 
     specials_map = {'e': ['e', 'ë'], 'c': ['c', 'ç']}
     for char in word:
-        if char != 'e' and char != 'c':
+        if char not in ['e', 'c']:
             perms = [perm + char for perm in perms]
         else:
             some_perms = [perm + specials_map[char][0] for perm in perms]

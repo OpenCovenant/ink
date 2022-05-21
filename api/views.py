@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 
 import PyPDF2
 
-from api.marking_generator import generate_markings
+from marking.marking_generator import generate_markings
 
 
 @api_view(['GET'])

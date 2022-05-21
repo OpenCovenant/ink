@@ -1,8 +1,7 @@
 from django.test import TestCase
 
+from marking.marking_generator import generate_ec_permutations
 from collections import Counter
-
-from api.ec_specials import generate_ec_permutations
 
 
 class EdiaeresisAndCcedillaTestCase(TestCase):

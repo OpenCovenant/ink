@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, tag
 
 from utils.utils import TEXT_KEY, TEXT_MARKINGS_KEY, fetch_all_words, fetch_sentence_iterator, \
     fetch_quoted_texts_iterator, fetch_email_iterator, fetch_link_iterator, fetch_abbreviation_iterator, \
@@ -270,6 +270,7 @@ class EmailParsingTestCase(TestCase):
             self.assertEqual(email.group(), w)
 
 
+@tag('requires_dataset')
 class AbbreviationParsingTestCase(TestCase):
     def test_abbreviations(self):
         abbreviation = "p.sh."

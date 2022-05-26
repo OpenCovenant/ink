@@ -13,7 +13,7 @@ class EdiaeresisAndCcedillaTestCase(TestCase):
     def test_generated_permutations_empty_text(self):
         text = ""
         permutations = generate_ec_permutations(text)
-        self.assertEqual(permutations, [])
+        self.assertEqual(permutations, ['a'])
 
     def test_generated_permutations_for_c_cedilla(self):
         text = "cjap"

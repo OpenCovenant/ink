@@ -23,6 +23,13 @@ and third are tasked with much of the logic and behaviour, while the second with
 evaluation of the current behaviour is provided in the [INITIAL EVALUATION](docs/INITIAL_EVALUATION.md) page.
 Additionally, you can also check out what we look forward to in the future for **penda** at [ROADMAP](docs/ROADMAP.md).
 
+#### How to Run
+
+To have **quill** running locally, start by cloning the repository and installing the dependencies. Afterwards, simply
+running `python manage.py runserver` will start the server. Keep in mind that a new secret key is generated on each run
+if one is not found in the environment (managing the security aspect is entirely your responsibility and should be
+handled with the appropriate care).
+
 ### Contributors
 
 Throughout the development of this project we've received significant help from various contributors related to a wide

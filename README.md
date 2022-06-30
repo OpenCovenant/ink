@@ -17,15 +17,15 @@ capabilities of **penda** include:
 - providing various details on etymology, synonyms, antonyms, and so on, on each word
 - translator
 
-The **penda** project is compound of three repositories, [**quill**](https://github.com/OpenCovenant/quill),
-[**quill-fe**](https://github.com/OpenCovenant/quill-fe), and [**ink**](https://github.com/OpenCovenant/ink). The first
-and third are tasked with much of the logic and behaviour, while the second with its visual aspect. A more formal
-evaluation of the current behaviour is provided in the [INITIAL EVALUATION](docs/INITIAL_EVALUATION.md) page.
-Additionally, you can also check out what we look forward to in the future for **penda** at [ROADMAP](docs/ROADMAP.md).
+The **penda** project is compound of two repositories, [**quill**](https://github.com/OpenCovenant/quill) and
+[**ink**](https://github.com/OpenCovenant/ink). The former is tasked with much of the logic and behaviour,
+while the latter with its visual aspect. A more formal evaluation of the current behaviour is provided in
+the [INITIAL EVALUATION](docs/INITIAL_EVALUATION.md) page. Additionally, you can also check out what we look forward to
+in the future for **penda** at [ROADMAP](docs/ROADMAP.md).
 
 #### How to Run
 
-To have **quill** running locally, start by cloning the repository and installing the dependencies. Afterwards, simply
+To have **ink** running locally, start by cloning the repository and installing the dependencies. Afterwards, simply
 running `python manage.py runserver` will start the server. Keep in mind that a new secret key is generated on each run
 if one is not found in the environment (managing the security aspect is entirely your responsibility and should be
 handled with the appropriate care).
@@ -40,8 +40,8 @@ which the actual name is obviously optional.
 - AndiBraimllari (Andi Braimllari) - core developer
 - KostaTB - linguistic advisor
 
-To get started with contributing, simply create an [issue](https://github.com/OpenCovenant/quill-fe/issues) if there's a
-concern to be addressed, or a [pull request](https://github.com/OpenCovenant/quill-fe/pulls) if there are changes you'd
+To get started with contributing, simply create an [issue](https://github.com/OpenCovenant/ink/issues) if there's a
+concern to be addressed, or a [pull request](https://github.com/OpenCovenant/ink/pulls) if there are changes you'd
 like to make.
 
 ### Contact

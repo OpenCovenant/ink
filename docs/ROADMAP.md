@@ -66,8 +66,8 @@ needs to be addressed, feel free to bring it up.
 - Consider adding a "clear all written text" button, perhaps as an "x" button in the top-right of the editor.
 - Consider adding a history of the texts processed.
 - Consider on how to technically handle the conjugations of loanwords?
-- [**enhancement**] After deciding on the algorithms, if their implementation on C++ (purpose of the **quill**
-  repository) provides sufficiently increased performance, add Python bindings and utilize them through this Django
+- [**enhancement**] After deciding on the algorithms, if their implementation on C++ provides sufficiently increased
+  performance, add Python bindings and utilize them through this Django
   application.
 - [**question**] Would word autocomplete/autosuggest be a useful tool here (perhaps during the writing of relatively
   long words e.g. **përpjestueshmërisht**?)

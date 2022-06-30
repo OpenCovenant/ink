@@ -15,6 +15,16 @@ def ping(request):
 
 @api_view(["POST"])
 def marking(request):
+    paragraphed_text = request.body.decode('utf-8')
+
+    max_suggestions = int(request.GET.get('limit', '-1'))
+    content = generate_markings(paragraphed_text, max_suggestions)
+
+    return JsonResponse(content)
+
+
+@api_view(["POST"])
+def marking_for_text(request):
     text = request.body.decode('utf-8')
 
     max_suggestions = int(request.GET.get('limit', '-1'))

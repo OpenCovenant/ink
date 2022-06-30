@@ -3,6 +3,7 @@ import os
 import pickle
 import re
 from random import shuffle
+from bs4 import BeautifulSoup
 
 from marking.ec_specials import generate_ec_permutations
 from marking.grammar_rules.overly_long_sentence_rule import check_for_overly_long_sentence
@@ -80,7 +81,7 @@ else:
     print('the latin words are already loaded')
 
 
-def generate_markings(text, max_suggestions=-1):
+def generate_markings(paragraphed_text, max_suggestions=-1):
     # There's currently an ongoing implicit gentleman's agreement to not deliberately spam the server. If broken, this
     # (and additional measures in this vein) will be enabled.
     # if len(text) > 5000:
@@ -92,13 +93,26 @@ def generate_markings(text, max_suggestions=-1):
     # highlighted_typos = pyink.spelling.correctTypos(text)
     # highlighted_stylistics = pyink.spelling.generateStylisticChanges(text)
 
-    content = {TEXT_KEY: text, TEXT_MARKINGS_KEY: []}
+    htmls = """<p><b>Hey</b></p>
+                <p>jello</p>
+                <p><b>There</b></p>
+                <p>jam</p>
+                <p>joy</p>
+                <p><b>Bye</b></p>
+                <p>jar</p>"""
+    html = BeautifulSoup(paragraphed_text)
 
-    word_markings = iterate_words(text, max_suggestions)
-    sentence_markings = iterate_sentences(text)
+    for paragraph in html.find_all('p'):
+        pass
 
-    content[TEXT_MARKINGS_KEY].extend(word_markings)
-    content[TEXT_MARKINGS_KEY].extend(sentence_markings)
+    content = {TEXT_KEY: paragraphed_text, TEXT_MARKINGS_KEY: []}
+    for paragraph in paragraphed_text.find_all('p'):
+        paragraph_text = paragraph.text
+        word_markings = iterate_words(paragraph_text, max_suggestions)
+        sentence_markings = iterate_sentences(paragraph_text)
+
+        content[TEXT_MARKINGS_KEY].extend(word_markings)
+        content[TEXT_MARKINGS_KEY].extend(sentence_markings)
 
     return content
 

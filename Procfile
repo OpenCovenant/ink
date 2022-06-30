@@ -1,1 +1,1 @@
-web: gunicorn --workers=1 quill.wsgi
+web: gunicorn --workers=1 ink.wsgi

@@ -2,8 +2,13 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 
 import PyPDF2
+import docx
+from odf import text, teletype
+from odf.opendocument import load
+
 
 from marking.marking_generator import generate_markings
+
 
 
 @api_view(['GET'])
@@ -46,14 +51,25 @@ def translation(request):
 
     return JsonResponse(textInEnglish)
 
-
 @api_view(["POST"])
 def upload_document(request):
+    print("POsth ke len")
+    print(len(request.FILES))
+    
     if len(request.FILES) != 1:
+        
         raise ValueError('')
 
     uploaded_file_key = list(request.FILES.keys())[0]
     file = request.FILES[uploaded_file_key]
+    print("file type o")
+    print(file.content_type)
+    
+    microsoftFormat = docx.Document(file)
+    
+    fullText = []
+    for para in microsoftFormat.paragraphs:
+        fullText.append(para.text)
 
     text = ''
     if file.content_type == 'application/pdf':
@@ -62,10 +78,12 @@ def upload_document(request):
     elif file.content_type == 'application/vnd.oasis.opendocument.text':
         pass  # .odt
     elif file.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-        pass  # .docx
+        for page in fullText:
+            text += page
     elif file.content_type == 'application/msword':
-        pass  # .doc
-    else:
+        pass# .doc
+    
+    else:   
         raise ValueError('Document format not supported!')
 
     content = generate_markings(text)

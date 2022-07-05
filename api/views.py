@@ -3,13 +3,8 @@ from rest_framework.decorators import api_view
 
 import PyPDF2
 import docx
-from odf import text, teletype
-from odf.opendocument import load
-
 
 from marking.marking_generator import generate_markings
-
-
 
 @api_view(['GET'])
 def ping(request):
@@ -53,7 +48,6 @@ def translation(request):
 
 @api_view(["POST"])
 def upload_document(request):
-    print("POsth ke len")
     print(len(request.FILES))
     
     if len(request.FILES) != 1:
@@ -62,8 +56,6 @@ def upload_document(request):
 
     uploaded_file_key = list(request.FILES.keys())[0]
     file = request.FILES[uploaded_file_key]
-    print("file type o")
-    print(file.content_type)
     
     microsoftFormat = docx.Document(file)
     
@@ -81,8 +73,7 @@ def upload_document(request):
         for page in fullText:
             text += page
     elif file.content_type == 'application/msword':
-        pass# .doc
-    
+        pass# .doc   
     else:   
         raise ValueError('Document format not supported!')
 

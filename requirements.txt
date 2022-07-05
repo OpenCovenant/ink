@@ -5,3 +5,4 @@ djangorestframework~=3.13.0
 gunicorn
 PyPDF2~=1.26.0
 python-dotenv
+python-docx

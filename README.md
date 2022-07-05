@@ -37,6 +37,7 @@ range of aspects. We'd like to express our gratitude in the following alphabetic
 finalizing your first MR, **add yourself**! The format is _username [(firstname lastname)] - role/contribution_, in
 which the actual name is obviously optional.
 
+- AndersonCeci (Anderson Ceci)
 - AndiBraimllari (Andi Braimllari) - core developer
 - KostaTB - linguistic advisor
 

@@ -6,6 +6,7 @@ import docx
 
 from marking.marking_generator import generate_markings
 
+
 @api_view(['GET'])
 def ping(request):
     print('simply got pinged to trigger a start')
@@ -46,22 +47,14 @@ def translation(request):
 
     return JsonResponse(textInEnglish)
 
+
 @api_view(["POST"])
 def upload_document(request):
-    print(len(request.FILES))
-    
     if len(request.FILES) != 1:
-        
-        raise ValueError('')
+        raise ValueError('Only one file should be uploaded!')
 
     uploaded_file_key = list(request.FILES.keys())[0]
     file = request.FILES[uploaded_file_key]
-    
-    microsoftFormat = docx.Document(file)
-    
-    fullText = []
-    for para in microsoftFormat.paragraphs:
-        fullText.append(para.text)
 
     text = ''
     if file.content_type == 'application/pdf':
@@ -70,11 +63,11 @@ def upload_document(request):
     elif file.content_type == 'application/vnd.oasis.opendocument.text':
         pass  # .odt
     elif file.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-        for page in fullText:
-            text += page
+        for paragraph in docx.Document(file).paragraphs:
+            text += paragraph.text
     elif file.content_type == 'application/msword':
-        pass# .doc   
-    else:   
+        pass  # .doc
+    else:
         raise ValueError('Document format not supported!')
 
     content = generate_markings(text)

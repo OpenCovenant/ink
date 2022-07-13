@@ -1,4 +1,5 @@
 from django.test import TestCase
+import secrets
 
 from marking.marking_generator import generate_markings, has_numbers, has_uppercase_letters
 from utils.utils import TEXT_KEY, TEXT_MARKINGS_KEY, ALPHABET
@@ -17,7 +18,6 @@ class MarkingsTestCase(TestCase):
         self.assertEqual(len(empty_marking[TEXT_MARKINGS_KEY]), 0)
 
     def test_number_of_suggestions_in_a_marking(self):
-        import secrets
         len_of_word = secrets.randbelow(10)
 
         text = ""
@@ -99,7 +99,6 @@ class MarkingsTestCase(TestCase):
         "pesëqind e gjashtëdhjetë e një"
         "dy mijë e tetëdhjetë e nëntë"
         "shtatëmbëdhjetë mijë e gjashtëqind e dy"
-        pass
 
     # def test_markings_on_a_hash(self):
     #     text = "#"

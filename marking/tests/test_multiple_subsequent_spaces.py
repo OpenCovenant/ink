@@ -13,7 +13,7 @@ class MultipleSpacesTestCase(TestCase):
                               SUBTYPE_KEY: 'gabim gramatikor, shenja pikësimi',
                               DESCRIPTION_KEY: 'hapësira nuk mund të ndiqet nga një ose disa hapësira të tjera',
                               SUGGESTIONS_KEY: [suggestion]}]
-        words = [w for w in fetch_word_iterator(text)]
+        words = list(fetch_word_iterator(text))
         self.assertEqual(check_for_multiple_subsequent_spaces(text, words), expected_markings)
 
     def test_two_spaces(self):
@@ -23,12 +23,12 @@ class MultipleSpacesTestCase(TestCase):
                                    SUBTYPE_KEY: 'gabim gramatikor, shenja pikësimi',
                                    DESCRIPTION_KEY: 'hapësira nuk mund të ndiqet nga një ose disa hapësira të tjera',
                                    SUGGESTIONS_KEY: [suggestion]}]
-        words = [w for w in fetch_word_iterator(sentences)]
+        words = list(fetch_word_iterator(sentences))
         self.assertEqual(check_for_multiple_subsequent_spaces(sentences, words), expected_date_markings)
 
     def test_check_for_a_nasdonspace_after_coasdmma2_non_breaking_space(self):
         sentence = "Këngëtares i pëlqente jo vetëm mikpritja, por edhe atmosfera."
-        words = [w for w in fetch_word_iterator(sentence)]
+        words = list(fetch_word_iterator(sentence))
         self.assertEqual(check_for_multiple_subsequent_spaces(sentence, words), [])
 
     def test_check_for_a_nasdonspace_after_coasdmma1_non_breaking_space(self):
@@ -38,5 +38,5 @@ class MultipleSpacesTestCase(TestCase):
                                    SUBTYPE_KEY: 'gabim gramatikor, shenja pikësimi',
                                    DESCRIPTION_KEY: 'hapësira nuk mund të ndiqet nga një ose disa hapësira të tjera',
                                    SUGGESTIONS_KEY: [suggestion]}]
-        words = [w for w in fetch_word_iterator(sentence)]
+        words = list(fetch_word_iterator(sentence))
         self.assertEqual(check_for_multiple_subsequent_spaces(sentence, words), expected_date_markings)

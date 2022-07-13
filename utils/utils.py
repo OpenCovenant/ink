@@ -2,6 +2,7 @@ import json
 import os
 import re
 from itertools import chain
+from collections import deque
 
 DESCRIPTION_KEY = 'description'
 
@@ -28,7 +29,7 @@ ALPHABET = ['a', 'b', 'c', 'ç', 'd', 'dh', 'e', 'ë', 'f', 'g', 'gj', 'h', 'i',
             'o', 'p', 'q', 'r', 'rr', 's', 'sh', 't', 'th', 'u', 'v', '	x', 'xh	', 'y', 'z', 'zh']
 
 bashketingellore_e_shurdhet = ['f', 'k', 'p', 'q', 't', 'th']
-bashketingellore_e_zeshme = ['b', 'd', 'dh' 'g', 'gj', 'v', 'x', 'xh', 'z', 'zh']
+bashketingellore_e_zeshme = ['b', 'd', 'dh', 'g', 'gj', 'v', 'x', 'xh', 'z', 'zh']
 bashketingellore_e_tingullt = ['l', 'll', 'r', 'rr', 'm', 'n', 'nj', 'j']
 
 # theks i mprehte
@@ -40,7 +41,7 @@ if ABBREVIATIONS is None:
     path = 'static/abbreviations.json'
     if os.path.exists(path):
         with open(path, 'rb') as file:
-            ABBREVIATIONS = [abbreviation for abbreviation in json.load(file)]
+            ABBREVIATIONS = list(json.load(file))
     else:
         print('no dialectisms were found, initializing to empty')
         ABBREVIATIONS = []
@@ -140,13 +141,12 @@ def skim_text(text):
 
 
 def merge(intervals):
-    from collections import deque
     merged_intervals = deque([])
     for interval in sorted(intervals, key=lambda v: v[0]):
         if merged_intervals and interval[0] <= merged_intervals[-1][1]:
             merged_intervals[-1][1] = max(merged_intervals[-1][1], interval[1])
         else:
-            merged_intervals.append(interval),
+            merged_intervals.append(interval)
     return merged_intervals
 
 

@@ -175,11 +175,11 @@ class TextParsingTestCase(TestCase):
 class QuotedTextParsingTestCase(TestCase):
     def test_unquoted_texts(self):
         text = "Kryqëzoi këmbët, u shtri pak në karrige dhe nxori tymin…"
-        self.assertEqual([quoted_text for quoted_text in fetch_quoted_texts_iterator(text)], [])
+        self.assertEqual(list(fetch_quoted_texts_iterator(text)), [])
 
     def test_another_unquoted_texts(self):
         text = 'Kryqëzoi këmbët, u "shtri pak në karrige dhe nxori tymin…'
-        self.assertEqual([quoted_text for quoted_text in fetch_quoted_texts_iterator(text)], [])
+        self.assertEqual(list(fetch_quoted_texts_iterator(text)), [])
 
     def test_quoted_text1(self):
         text = 'S’ka qenë ndonjherë ndonjë "pirës" i madh.'

@@ -28,7 +28,7 @@ if LOANWORDS is None:
 else:
     print('the loanwords are already loaded')
 
-ADAPTATIONS_OF_LOANWORDS = [loanword for loanword in LOANWORDS]
+ADAPTATIONS_OF_LOANWORDS = list(LOANWORDS)
 
 DICTIONARY = None
 DELETES_DICTIONARY = None
@@ -109,7 +109,7 @@ def iterate_sentences(text):
     for sentence_match in fetch_sentence_iterator(text):
         sentence = sentence_match.group()
         sentence_start_index = sentence_match.start()
-        words = [w for w in fetch_word_iterator(sentence)]
+        words = list(fetch_word_iterator(sentence))
 
         # # TODO
         # comma_markings = check_for_a_comma_rule(text, sentence, sentence_start_index)
@@ -290,7 +290,7 @@ def generate_deletes_of_words(words):
 
     for word in words:
         word_deletes = generate_deletes_of_word(word)
-        for k in word_deletes.keys():
+        for k in word_deletes:
             if k in deletes:
                 deletes[k].extend(word_deletes[k])
             else:

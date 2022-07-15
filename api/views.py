@@ -70,6 +70,7 @@ def upload_document(request):
     else:
         raise ValueError('Document format not supported!')
 
-    content = generate_markings(text)
+    max_suggestions = int(request.GET.get('limit', '-1'))
+    content = generate_markings(text, max_suggestions)
 
     return JsonResponse(content)

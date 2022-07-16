@@ -53,6 +53,8 @@ def upload_document(request):
     if len(request.FILES) != 1:
         raise ValueError('Only one file should be uploaded!')
 
+    max_suggestions = int(request.GET.get('limit', '-1'))
+    
     uploaded_file_key = list(request.FILES.keys())[0]
     file = request.FILES[uploaded_file_key]
 
@@ -70,7 +72,6 @@ def upload_document(request):
     else:
         raise ValueError('Document format not supported!')
 
-    max_suggestions = int(request.GET.get('limit', '-1'))
     content = generate_markings(text, max_suggestions)
 
     return JsonResponse(content)
